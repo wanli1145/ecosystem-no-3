@@ -192,6 +192,13 @@ h2 {
   align-items: center;
   gap: 8px;
   min-width: 146px;
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+.character:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  z-index: 10;
 }
 
 .is-mini .character {
@@ -199,18 +206,87 @@ h2 {
 }
 
 .character-avatar {
-  display: grid;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   flex: 0 0 auto;
+  display: grid;
   place-items: center;
   border: 3px solid rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   background: var(--character-color);
-  box-shadow: 0 10px 18px rgba(43, 39, 35, 0.16);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 0 0 2px rgba(255, 255, 255, 0.3);
   color: #fff;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 800;
+  position: relative;
+  overflow: hidden;
+  animation: float 3s ease-in-out infinite;
+}
+
+.character-avatar:has(.avatar-img) {
+  background: transparent;
+  border: none;
+  overflow: visible;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.character:nth-child(n+4) .character-avatar {
+  width: 110px;
+  height: 110px;
+  font-size: 64px;
+  border-width: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.character:nth-child(4) .character-avatar { animation: deerRun 0.8s ease-in-out infinite; }
+.character:nth-child(5) .character-avatar { animation: dogTongue 2s ease-in-out infinite; }
+.character:nth-child(6) .character-avatar { animation: owlLook 3.5s ease-in-out infinite; }
+.character:nth-child(7) .character-avatar { animation: hedgehogRoll 4s ease-in-out infinite; }
+
+@keyframes deerRun {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(6px) translateY(-5px); }
+  50% { transform: translateX(0) translateY(0); }
+  75% { transform: translateX(-6px) translateY(-5px); }
+}
+
+@keyframes dogTongue {
+  0%, 70%, 100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-8px) scale(1.08); }
+  50% { transform: translateY(0) scale(1) rotate(-8deg); }
+  60% { transform: translateY(0) scale(1) rotate(8deg); }
+}
+
+@keyframes owlLook {
+  0%, 35%, 65%, 100% { transform: rotateY(0deg) scaleY(1); }
+  40% { transform: rotateY(0deg) scaleY(0.1); }
+  45% { transform: rotateY(0deg) scaleY(1); }
+  55% { transform: rotateY(20deg) scaleY(1); }
+  75% { transform: rotateY(-20deg) scaleY(1); }
+  90% { transform: rotateY(0deg) scaleY(1); }
+}
+
+@keyframes hedgehogRoll {
+  0%, 5% { transform: rotate(0deg); }
+  10% { transform: rotate(180deg); }
+  15% { transform: rotate(360deg); }
+  20% { transform: rotate(540deg); }
+  25%, 100% { transform: rotate(720deg); }
+}
+.character:nth-child(5) .character-avatar { animation-delay: 0.6s; }
+.character:nth-child(6) .character-avatar { animation-delay: 1.2s; }
+.character:nth-child(7) .character-avatar { animation-delay: 1.8s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 .is-mini .character-avatar {
@@ -223,9 +299,16 @@ h2 {
 .character-card {
   max-width: 176px;
   border: 1px solid rgba(36, 63, 58, 0.14);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
-  padding: 7px 9px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 8px 10px;
+  backdrop-filter: blur(4px);
+  animation: cardPop 0.2s ease-out;
+}
+
+@keyframes cardPop {
+  from { opacity: 0; transform: scale(0.9) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .is-mini .character-card {
@@ -237,15 +320,47 @@ h2 {
   display: block;
 }
 
+.character-card strong {
+  font-size: 13px;
+  color: #243f3a;
+  margin-bottom: 2px;
+}
+
 .character-card span {
   color: #60756f;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .character-card p {
   margin: 4px 0 0;
   font-size: 12px;
-  line-height: 1.35;
+  line-height: 1.4;
+  color: #3e5a54;
+}
+
+.character-tone {
+  margin-top: 3px;
+  color: var(--character-color) !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+}
+
+.character-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+
+.character-tags .tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--character-color) 18%, transparent);
+  color: #243f3a;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .side-panel {

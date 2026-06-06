@@ -1,14 +1,16 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import type { OwnerMode, UIMode } from "../shared/types";
 import { ownerModeLabels, uiModeLabels, weatherLabels } from "../shared/types";
 import type { WorldEvent } from "../shared/events";
 import { initialWorldState, reducer } from "../shared/reducer";
+import { getCharacterProfile } from "../shared/config/characters";
 
 const ownerModes: OwnerMode[] = ["focus", "rest", "chat", "do_not_disturb"];
 
 export function App(): React.JSX.Element {
   const [world, dispatchBase] = useReducer(reducer, initialWorldState);
   const isMini = world.uiMode === "mini";
+  const [showCardId, setShowCardId] = useState<string | null>(null);
 
   function dispatch(event: WorldEvent): void {
     dispatchBase(event);
@@ -47,8 +49,10 @@ export function App(): React.JSX.Element {
             <div className="window-glow" />
             <div className="desk" />
             <div className="rug" />
-            {world.characters.map((character) => (
-              <article
+            {world.characters.map((character) => {
+              const profile = getCharacterProfile(character.id);
+              return (
+                <article
                 className="character"
                 key={character.id}
                 style={{
@@ -57,14 +61,25 @@ export function App(): React.JSX.Element {
                   ["--character-color" as string]: character.color
                 }}
               >
-                <div className="character-avatar">{character.name.slice(0, 1)}</div>
+                <div
+                  className="character-avatar"
+                  aria-label={character.name}
+                  onClick={() => setShowCardId(showCardId === character.id ? null : character.id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {profile ? profile.avatar : character.name.slice(0, 1)}
+                </div>
+                {showCardId === character.id && profile && (
                 <div className="character-card">
                   <strong>{character.name}</strong>
+                  <div className="character-tags">{profile.personalityTags.map(t => <span className="tag" key={t}>{t}</span>)}</div>
                   <span>{character.currentAction}</span>
-                  {!isMini && <p>{character.lastDialogue}</p>}
+                  <span>{character.lastDialogue}</span>
+                  <span className="character-tone">语气：{profile.defaultTone}</span>
                 </div>
+                )}
               </article>
-            ))}
+            )})}
           </div>
         </section>
 
