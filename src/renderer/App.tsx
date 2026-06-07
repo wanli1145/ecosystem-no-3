@@ -1,8 +1,10 @@
 import { useReducer } from "react";
 import type { OwnerMode, UIMode } from "../shared/types";
-import { ownerModeLabels, uiModeLabels, weatherLabels } from "../shared/types";
+import { ownerModeLabels, uiModeLabels } from "../shared/types";
 import type { WorldEvent } from "../shared/events";
 import { initialWorldState, reducer } from "../shared/reducer";
+import { EventLogPanel } from "./components/EventLogPanel";
+import { WorldStatePanel } from "./components/WorldStatePanel";
 
 const ownerModes: OwnerMode[] = ["focus", "rest", "chat", "do_not_disturb"];
 
@@ -85,55 +87,9 @@ export function App(): React.JSX.Element {
               </div>
             </section>
 
-            <section>
-              <h2>WorldState</h2>
-              <dl className="state-list">
-                <div>
-                  <dt>uiMode</dt>
-                  <dd>{world.uiMode}</dd>
-                </div>
-                <div>
-                  <dt>weather</dt>
-                  <dd>{weatherLabels[world.weather.kind]}</dd>
-                </div>
-                <div>
-                  <dt>owner.mode</dt>
-                  <dd>{world.ownerContext.mode}</dd>
-                </div>
-                <div>
-                  <dt>presence</dt>
-                  <dd>{world.ownerContext.presence}</dd>
-                </div>
-                <div>
-                  <dt>focus.min</dt>
-                  <dd>{world.ownerContext.todayFocusMinutes}</dd>
-                </div>
-                <div>
-                  <dt>characters</dt>
-                  <dd>{world.characters.length}</dd>
-                </div>
-                <div>
-                  <dt>llm.mode</dt>
-                  <dd>{world.llmBudget.mode}</dd>
-                </div>
-                <div>
-                  <dt>pending</dt>
-                  <dd>{world.pendingSocialEvent ? world.pendingSocialEvent.kind : "none"}</dd>
-                </div>
-              </dl>
-            </section>
+            <WorldStatePanel world={world} />
 
-            <section>
-              <h2>事件日志</h2>
-              <ol className="event-log">
-                {world.eventLog.map((entry) => (
-                  <li key={entry.id}>
-                    <time>{new Date(entry.at).toLocaleTimeString("zh-CN", { hour12: false })}</time>
-                    <span>{entry.text}</span>
-                  </li>
-                ))}
-              </ol>
-            </section>
+            <EventLogPanel entries={world.eventLog} />
           </aside>
         )}
       </section>
