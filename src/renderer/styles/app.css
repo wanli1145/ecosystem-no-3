@@ -318,3 +318,43 @@ h2 {
   font-size: 11px;
   font-weight: 700;
 }
+
+/* EventLogPanel styles */
+.event-log-panel {
+  /* inherits from side-panel section */
+}
+
+.event-log-empty {
+  color: #8a9a96;
+  font-size: 13px;
+  font-style: italic;
+  margin: 10px 0 0;
+}
+
+.event-log-item {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.event-type-badge {
+  display: inline-block;
+  border-radius: 4px;
+  background: rgba(97, 199, 179, 0.18);
+  color: #3e7a6e;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.event-text {
+  font-size: 13px;
+  color: #243f3a;
+}
+
+/* WorldStatePanel styles */
+.world-state-panel {
+  /* inherits from side-panel section */
+}
