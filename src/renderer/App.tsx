@@ -8,10 +8,12 @@ import { CharacterActionMenu } from "./components/CharacterActionMenu";
 import { DialogueBubble } from "./components/DialogueBubble";
 import { MoodParticles } from "./components/MoodParticles";
 import { getDiverseResponse } from "./data/responses";
+import { getCharacterProfile } from "../shared/config/characters";
 
 export function App(): React.JSX.Element {
   const [world, dispatchBase] = useReducer(reducer, initialWorldState);
   const isMini = world.uiMode === "mini";
+  const [showCardId, setShowCardId] = useState<string | null>(null);
 
   interface ParticleEffect {
     id: number;
@@ -88,36 +90,50 @@ export function App(): React.JSX.Element {
             <div className="window-glow" />
             <div className="desk" />
             <div className="rug" />
-            {world.characters.map((character) => (
-              <article
-                className="character"
-                key={character.id}
-                style={{
-                  left: `${character.position.x}%`,
-                  top: `${character.position.y}%`,
-                  ["--character-color" as string]: character.color
-                }}
-              >
-                <div className="character-card">
-                  <div className="character-card-row">
-                    <div className="character-avatar">{character.name.slice(0, 1)}</div>
-                    <strong>{character.name}</strong>
-                    <span>{character.currentAction}</span>
-                    {!isMini && (
-                      <CharacterActionMenu
-                        characterId={character.id}
-                        onCare={handleCare}
-                        onAssignTask={handleAssignTask}
-                      />
-                    )}
-                  </div>
-                  {!isMini && <DialogueBubble text={character.lastDialogue} />}
+            {world.characters.map((character) => {
+              const profile = getCharacterProfile(character.id);
+              return (
+                <article
+                  className="character"
+                  key={character.id}
+                  style={{
+                    left: `${character.position.x}%`,
+                    top: `${character.position.y}%`,
+                    ["--character-color" as string]: character.color,
+                  }}
+                >
+                <div
+                  className="character-avatar"
+                  aria-label={character.name}
+                  onClick={() => setShowCardId(showCardId === character.id ? null : character.id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {profile ? profile.avatar : character.name.slice(0, 1)}
                 </div>
-                {particles.filter(p=>p.characterId===character.id).map(p=>(
-                  <MoodParticles key={p.id} careType={p.careType} characterColor={p.color} onComplete={()=>removeParticle(p.id)} />
+                {showCardId === character.id && profile && (
+                <div className="character-card">
+                <div className="character-card-row">
+                <strong>{character.name}</strong>
+                <span>{character.currentAction}</span>
+                {!isMini && (
+                <CharacterActionMenu
+                characterId={character.id}
+                onCare={handleCare}
+                onAssignTask={handleAssignTask}
+                />
+                )}
+                </div>
+                <div className="character-tags">{profile.personalityTags.map(t => <span className="tag" key={t}>{t}</span>)}</div>
+                <span className="character-tone">语气：{profile.defaultTone}</span>
+                {!isMini && <DialogueBubble text={character.lastDialogue} />}
+                </div>
+                )}
+                {particles.filter(p => p.characterId === character.id).map(p => (
+                <MoodParticles key={p.id} careType={p.careType} characterColor={p.color} onComplete={() => removeParticle(p.id)} />
                 ))}
-              </article>
-            ))}
+                </article>
+                );
+                })}
           </div>
         </section>
 
