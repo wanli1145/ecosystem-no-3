@@ -108,6 +108,10 @@ h2 {
   font-size: 13px;
 }
 
+.is-mini .character-action-menu-container {
+  display: none;
+}
+
 .room-panel,
 .side-panel {
   border: 1px solid rgba(36, 63, 58, 0.16);
@@ -143,7 +147,7 @@ h2 {
 .room-stage {
   position: relative;
   min-height: 516px;
-  overflow: hidden;
+  overflow: visible;
   background:
     linear-gradient(#f8dcc6 0 38%, transparent 38%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.42), transparent 18%),
@@ -188,10 +192,6 @@ h2 {
 .character {
   position: absolute;
   transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 146px;
 }
 
 .is-mini .character {
@@ -221,7 +221,9 @@ h2 {
 }
 
 .character-card {
-  max-width: 176px;
+  position: relative;
+  max-width: 240px;
+  min-width: 140px;
   border: 1px solid rgba(36, 63, 58, 0.14);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.88);
@@ -230,6 +232,12 @@ h2 {
 
 .is-mini .character-card {
   display: none;
+}
+
+.character-card-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .character-card strong,
@@ -317,4 +325,131 @@ h2 {
   color: #718079;
   font-size: 11px;
   font-weight: 700;
+}
+
+/* DialogueBubble 样式 */
+.dialogue-bubble {
+  margin-top: 4px;
+  padding: 6px 8px;
+  background: #f5f0e8;
+  border-radius: 6px;
+  border: 1px solid rgba(36, 63, 58, 0.12);
+}
+
+.dialogue-bubble p {
+  margin: 0;
+  color: #3e5a54;
+  font-size: 11px;
+  line-height: 1.35;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* CharacterActionMenu 样式 */
+.character-action-menu-container {
+  display: inline-block;
+  margin-left: auto;
+}
+
+.character-action-trigger {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(36, 63, 58, 0.2);
+  color: #243f3a;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.character-action-trigger:hover {
+  background: #243f3a;
+  color: #fff;
+}
+
+.character-action-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  z-index: 300;
+  min-width: 120px;
+  background: rgba(255, 252, 246, 0.98);
+  border: 1px solid rgba(36, 63, 58, 0.18);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(44, 52, 47, 0.18);
+  overflow: hidden;
+}
+
+.menu-section {
+  padding: 8px 0;
+}
+
+.menu-section + .menu-section {
+  border-top: 1px solid rgba(36, 63, 58, 0.1);
+}
+
+.menu-section-title {
+  padding: 4px 12px;
+  color: #718079;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #243f3a;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.menu-item:hover {
+  background: rgba(97, 199, 179, 0.15);
+}
+
+/* MoodParticles 粒子特效 */
+.mood-particles {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 200;
+}
+
+.mood-particle {
+  position: absolute;
+  opacity: 0;
+  animation: particle-float 3s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+}
+
+@keyframes particle-float {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.5);
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--x-offset, 0px) + var(--drift, 0px)),
+      -80px
+    )
+    rotate(var(--rotation, 0deg)) scale(1.1);
+  }
 }

@@ -1,14 +1,39 @@
-import { useReducer } from "react";
+import { useCallback, useReducer, useRef, useState } from "react";
 import type { OwnerMode, UIMode } from "../shared/types";
 import { ownerModeLabels, uiModeLabels, weatherLabels } from "../shared/types";
 import type { WorldEvent } from "../shared/events";
 import { initialWorldState, reducer } from "../shared/reducer";
-
-const ownerModes: OwnerMode[] = ["focus", "rest", "chat", "do_not_disturb"];
+import { OwnerModeBar } from "./components/OwnerModeBar";
+import { CharacterActionMenu } from "./components/CharacterActionMenu";
+import { DialogueBubble } from "./components/DialogueBubble";
+import { MoodParticles } from "./components/MoodParticles";
+import { getDiverseResponse } from "./data/responses";
 
 export function App(): React.JSX.Element {
   const [world, dispatchBase] = useReducer(reducer, initialWorldState);
   const isMini = world.uiMode === "mini";
+
+  interface ParticleEffect {
+    id: number;
+    characterId: string;
+    careType: string;
+    color: string;
+  }
+  const [particles, setParticles] = useState<ParticleEffect[]>([]);
+  const nextIdRef = useRef(0);
+
+  const removeParticle = useCallback((id: number) => {
+    setParticles((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
+  const triggerParticles = useCallback(
+    (characterId: string, careType: string, color: string) => {
+      const id = nextIdRef.current++;
+      setParticles((prev) => [...prev, { id, characterId, careType, color }]);
+    },
+    []
+  );
+
 
   function dispatch(event: WorldEvent): void {
     dispatchBase(event);
@@ -23,6 +48,22 @@ export function App(): React.JSX.Element {
 
   function changeOwnerMode(mode: OwnerMode): void {
     dispatch({ type: "OWNER_MODE_CHANGED", mode, at: Date.now() });
+  }
+
+  function handleCare(characterId: string, careType: "coffee" | "snack" | "pet"): void {
+    dispatch({ type: "OWNER_CARE", targetId: characterId, careType, at: Date.now() });
+    const text = getDiverseResponse(careType);
+    dispatch({ type: "DIALOGUE_GENERATED", speakerId: characterId, text, at: Date.now() });
+    const ch = world.characters.find((c) => c.id === characterId);
+    if (ch) triggerParticles(characterId, careType, ch.color);
+  }
+
+  function handleAssignTask(characterId: string, task: "study" | "rest" | "chat"): void {
+    dispatch({ type: "OWNER_TASK_ASSIGNED", targetId: characterId, task, at: Date.now() });
+    const text = getDiverseResponse(task);
+    dispatch({ type: "DIALOGUE_GENERATED", speakerId: characterId, text, at: Date.now() });
+    const ch = world.characters.find((c) => c.id === characterId);
+    if (ch) triggerParticles(characterId, task, ch.color);
   }
 
   return (
@@ -57,12 +98,24 @@ export function App(): React.JSX.Element {
                   ["--character-color" as string]: character.color
                 }}
               >
-                <div className="character-avatar">{character.name.slice(0, 1)}</div>
                 <div className="character-card">
-                  <strong>{character.name}</strong>
-                  <span>{character.currentAction}</span>
-                  {!isMini && <p>{character.lastDialogue}</p>}
+                  <div className="character-card-row">
+                    <div className="character-avatar">{character.name.slice(0, 1)}</div>
+                    <strong>{character.name}</strong>
+                    <span>{character.currentAction}</span>
+                    {!isMini && (
+                      <CharacterActionMenu
+                        characterId={character.id}
+                        onCare={handleCare}
+                        onAssignTask={handleAssignTask}
+                      />
+                    )}
+                  </div>
+                  {!isMini && <DialogueBubble text={character.lastDialogue} />}
                 </div>
+                {particles.filter(p=>p.characterId===character.id).map(p=>(
+                  <MoodParticles key={p.id} careType={p.careType} characterColor={p.color} onComplete={()=>removeParticle(p.id)} />
+                ))}
               </article>
             ))}
           </div>
@@ -70,20 +123,10 @@ export function App(): React.JSX.Element {
 
         {!isMini && (
           <aside className="side-panel">
-            <section>
-              <h2>主人模式</h2>
-              <div className="owner-mode-grid">
-                {ownerModes.map((mode) => (
-                  <button
-                    className={world.ownerContext.mode === mode ? "active" : ""}
-                    key={mode}
-                    onClick={() => changeOwnerMode(mode)}
-                  >
-                    {ownerModeLabels[mode]}
-                  </button>
-                ))}
-              </div>
-            </section>
+            <OwnerModeBar
+              currentMode={world.ownerContext.mode}
+              onModeChange={changeOwnerMode}
+            />
 
             <section>
               <h2>WorldState</h2>
