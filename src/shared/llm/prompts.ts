@@ -124,6 +124,7 @@ function summarizeWorld(world: WorldState): string {
   const owner = world.ownerContext;
   const recentLogs = world.eventLog.slice(0, 4).map((entry) => `${entry.type}:${entry.text}`).join(" | ");
   const pending = world.pendingSocialEvent ? world.pendingSocialEvent.seedText : "none";
+  const recentMemories = world.memories.slice(0, 5).map((m) => m.summary);
   return JSON.stringify(
     {
       uiMode: world.uiMode,
@@ -148,7 +149,8 @@ function summarizeWorld(world: WorldState): string {
       })),
       relationshipsPreview: summarizeRelationships(world),
       pendingSocialEvent: pending,
-      recentLogs
+      recentLogs,
+      memories: recentMemories
     },
     null,
     2
