@@ -1,9 +1,108 @@
-import type {
-  CharacterAction,
-  CharacterMood,
-  CharacterState,
-  WorldState
-} from "../types";
+import type { CharacterAction, CharacterChatMemory, CharacterMood, CharacterState, WorldState } from "../types";
+
+export type LlmDialogueRequest = {
+  characterId: string;
+  target: "owner" | "character" | "room";
+  targetCharacterId?: string;
+  ownerInput?: string;
+  worldSummary: string;
+  chatMemory?: CharacterChatMemory;
+};
+
+export type LlmDialogueResponse = {
+  characterId: string;
+  text: string;
+  emotion: "calm" | "happy" | "curious" | "focused" | "sleepy" | "excited" | "cozy";
+  actionSuggestion:
+    | "idle"
+    | "chat"
+    | "greet_owner"
+    | "talk_to_character"
+    | "observe_window"
+    | "look_weather"
+    | "think"
+    | "rest"
+    | "play";
+  reason: string;
+  memoryCandidate?: {
+    importance: number;
+    summary: string;
+  };
+};
+
+export type LlmSocialDialogueRequest = {
+  socialEventId: string;
+  speakerId: string;
+  targetId: string;
+  worldSummary: string;
+  socialSeed?: string;
+};
+
+export type LlmSocialDialogueResponse = {
+  socialEventId: string;
+  speakerId: string;
+  targetId: string;
+  text: string;
+  emotion: "calm" | "happy" | "curious" | "focused" | "sleepy" | "excited" | "cozy";
+  actionSuggestion: CharacterAction;
+  reason: string;
+  memoryCandidate?: {
+    importance: number;
+    summary: string;
+  };
+};
+
+export type LlmDailySummaryResponse = {
+  summary: string;
+  ownerSummary: string;
+  characterHighlights: Array<{
+    characterId: string;
+    summary: string;
+  }>;
+  memoryCandidate: string;
+};
+
+export type LlmChatSummaryRequest = {
+  characterId: string;
+  memory: CharacterChatMemory;
+};
+
+export type LlmChatSummaryResponse = {
+  characterId: string;
+  summary: string;
+};
+
+export type LlmRuntimeConfigInput = {
+  baseUrl: string;
+  apiKey: string;
+  model?: string;
+};
+
+export type LlmRuntimeConfigStatus = {
+  baseUrl: string;
+  model: string;
+  hasApiKey: boolean;
+  source: "runtime" | "env" | "default";
+};
+
+export type LlmModelListResponse = {
+  models: string[];
+  selectedModel: string;
+  source: "api" | "mock" | "error";
+  error?: string;
+};
+
+export type LlmConnectionTestResponse = {
+  ok: boolean;
+  model: string;
+  status?: number;
+  message: string;
+};
+
+export type ChatPromptBundle = {
+  system: string;
+  user: string;
+};
 
 export type CharacterCard = {
   id: string;
@@ -60,17 +159,4 @@ export type IntentResult = {
   memoryCandidate: string;
 };
 
-export type DailySummaryResult = {
-  summary: string;
-  ownerSummary: string;
-  characterHighlights: Array<{
-    characterId: string;
-    summary: string;
-  }>;
-  memoryCandidate: string;
-};
-
-export type ChatPromptBundle = {
-  system: string;
-  user: string;
-};
+export type DailySummaryResult = LlmDailySummaryResponse;

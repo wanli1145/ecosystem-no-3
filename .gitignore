@@ -3,3 +3,7 @@ out/
 dist/
 .DS_Store
 *.log
+.pet-runs/
+*-hatch-pet-run/
+outputs/
+.weather_imagegen_start

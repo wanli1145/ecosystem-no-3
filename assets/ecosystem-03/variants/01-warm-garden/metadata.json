@@ -1,0 +1,49 @@
+{
+  "variant": "01-warm-garden",
+  "roomSize": {
+    "width": 1024,
+    "height": 1024
+  },
+  "windowRect": {
+    "x": 280,
+    "y": 110,
+    "width": 464,
+    "height": 130
+  },
+  "characterArea": {
+    "x": 180,
+    "y": 260,
+    "width": 660,
+    "height": 560
+  },
+  "constraints": {
+    "noFurniture": true,
+    "noCharacters": true,
+    "transparentExterior": true,
+    "transparentWindowRect": true
+  },
+  "layers": {
+    "weather": {
+      "path": "weather/",
+      "drawRect": "windowRect",
+      "files": {
+        "sunny": "weather/sunny-window.png",
+        "rainy": "weather/rainy-window.png",
+        "cloudy": "weather/cloudy-window.png",
+        "night": "weather/night-window.png"
+      }
+    },
+    "roomFrame": {
+      "path": "room-frame.png",
+      "drawRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      }
+    },
+    "characters": {
+      "drawArea": "characterArea"
+    }
+  }
+}

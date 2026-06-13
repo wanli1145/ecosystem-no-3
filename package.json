@@ -1,6 +1,6 @@
 {
   "name": "ecosystem-no-3",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "生态圈三号：介于虚拟与现实之间的桌面第三空间 MVP",
   "type": "module",
@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
+    "start": "electron .",
+    "preview": "electron-vite preview",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
